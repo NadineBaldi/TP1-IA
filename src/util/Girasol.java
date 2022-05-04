@@ -32,5 +32,13 @@ public class Girasol {
 	}
 	
 	
+	// Metodo para generar soles aleatoriamente
+	public void generarSoles() {
+		
+		if (cantSoles == 0) {
+			int solesAleatorios = (int)(Math.random()*(3-1+1)+1); //numero aleatorio entre 1 y 3
+			setCantSoles(solesAleatorios);
+		}
+	}
 
 }

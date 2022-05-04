@@ -10,7 +10,7 @@ public class Celda {
 	
 	public Celda(TipoEnum tipo) {
 		super();
-		this.tipo = tipo;
+		this.tipo = tipo; //la celda tiene algun tipo: vacia - zombie - girasol - desconocido (para cuando no se percibe)
 	}
 
 	public TipoEnum getTipo() {
@@ -21,4 +21,7 @@ public class Celda {
 		this.tipo = tipo;
 	}
 
+	public void setCelda(Girasol girasol) {
+		this.setTipo(TipoEnum.GIRASOL);
+	}
 }
