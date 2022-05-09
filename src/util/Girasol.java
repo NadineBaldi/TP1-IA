@@ -41,4 +41,18 @@ public class Girasol {
 		}
 	}
 
+	@Override
+	public String toString() {
+		return "Girasol con "+cantSoles+" soles";
+	}
+	
+	public Girasol clone() {
+		
+		Girasol clon = new Girasol();
+		
+		clon.setUbicacionGirasol(new Point(ubicacionGirasol.x, ubicacionGirasol.y));
+		clon.setCantSoles(this.cantSoles);
+		
+		return clon;
+	}
 }

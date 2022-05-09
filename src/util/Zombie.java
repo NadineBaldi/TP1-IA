@@ -7,11 +7,15 @@ public class Zombie {
 	private TipoZombie tipo; //tipo de zombie
 	private int costeDeSoles; //cantidad de soles con los que se puede matar al zombie
 	public Point ubicacionZombie;
+	public int turnosDetenido; //cantidad de turnos (de 1 a 3) que el zombie se mantuvo quieto en la misma celda
 	
-	public Zombie() {}
+	public Zombie() {
+		this.turnosDetenido = 0;
+	}
 	
 	public Zombie(TipoZombie tipo) {
 		super();
+		this.turnosDetenido = 0;
 		this.tipo = tipo;
 		switch(tipo) {
 			case ZOMBIE:
@@ -35,6 +39,8 @@ public class Zombie {
 		}
 	}
 	
+	//Getters and setters
+
 	public TipoZombie getTipo() {
 		return tipo;
 	}
@@ -52,6 +58,29 @@ public class Zombie {
 	}
 	public void setUbicacionZombie(Point ubicacionZombie) {
 		this.ubicacionZombie = ubicacionZombie;
+	}
+	public int getTurnosDetenido() {
+		return turnosDetenido;
+	}
+	public void setTurnosDetenido(int turnosDetenido) {
+		this.turnosDetenido = turnosDetenido;
+	}
+
+	
+	@Override
+	public String toString() {
+		return tipo.toString();
+	}
+	
+	public Zombie clone() {
+		
+		Zombie clon = new Zombie();
+		
+		clon.setTipo(this.tipo);
+		clon.setCosteDeSoles(this.costeDeSoles);
+		clon.setUbicacionZombie(new Point(ubicacionZombie.x, ubicacionZombie.y));
+		
+		return clon;
 	}
 
 }

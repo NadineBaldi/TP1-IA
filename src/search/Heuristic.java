@@ -8,6 +8,10 @@ import frsf.cidisi.faia.solver.search.NTree;
  * informed search strategy, like A Star or Greedy.
  */
 public class Heuristic implements IEstimatedCostFunction {
+	
+	public Heuristic() {
+		
+	}
 
     /**
      * It returns the estimated cost to reach the goal from a NTree node.
@@ -15,7 +19,8 @@ public class Heuristic implements IEstimatedCostFunction {
     @Override
     public double getEstimatedCost(NTree node) {
         EstadoAgente estadoAgente = (EstadoAgente) node.getAgentState();
-        //ver cual va a ser el costo del metodo de busqueda 	
-        return (0.0);
+        double cantidadZombiesAMatar = estadoAgente.getCantZombies();
+        //Toma el camino que le permita reducir la cantidad de zombies a matar (es decir, le permita matar zombies)	
+        return cantidadZombiesAMatar;
     }
 }

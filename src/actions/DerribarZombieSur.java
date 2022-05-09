@@ -1,12 +1,12 @@
 package actions;
 
 import java.awt.Point;
+import java.util.List;
 
 import frsf.cidisi.faia.agent.search.SearchAction;
 import frsf.cidisi.faia.agent.search.SearchBasedAgentState;
 import frsf.cidisi.faia.state.AgentState;
 import frsf.cidisi.faia.state.EnvironmentState;
-import search.AgentePercepciones;
 import search.EstadoAgente;
 import search.EstadoAmbiente;
 import util.Celda;
@@ -17,82 +17,146 @@ public class DerribarZombieSur extends SearchAction{
 
 	@Override
 	public SearchBasedAgentState execute(SearchBasedAgentState s) {
-		// TODO Auto-generated method stub
-	EstadoAgente estadoPlanta = (EstadoAgente) s;
+	
+		EstadoAgente estadoPlanta = (EstadoAgente) s;
+		EstadoAgente siguienteEstado = estadoPlanta.clone();
 		
-		Celda[][] mapa= estadoPlanta.getMapa();
-		AgentePercepciones percepcion = estadoPlanta.getPercepcion();
-		Point ubicacion = estadoPlanta.getPosicion();
-		java.util.List<Zombie> listaZombies = percepcion.getZombiesPercibidos();
+		if (estadoPlanta.getCantSolesDisponibles() > 0) { //ejecutar la accion solo si el agente tiene soles disponibles (CONDICION DE PARADA)
 		
-		
-		if((mapa[ubicacion.x-1][ubicacion.y].getTipo().equals(TipoEnum.ZOMBIE))){
-				boolean bandera=true;
+			Celda[][] mapa= estadoPlanta.getMapa();
+			Point ubicacion = estadoPlanta.getPosicion();
+			List<Zombie> zombiesPercibidos = estadoPlanta.getZombiesPercibidos();
 			
-				for(int i=0;i<listaZombies.size() && bandera;i++) {
-						
-						if((listaZombies.get(i).getUbicacionZombie().x==ubicacion.x-1) &&
-						  (listaZombies.get(i).getUbicacionZombie().y==ubicacion.y)) {
-							listaZombies.remove(i);
-						
-							percepcion.setZombiesPercibidos(listaZombies);
-							estadoPlanta.setCantSolesDisponibles(estadoPlanta.getCantSolesDisponibles()-listaZombies.get(i).getCosteDeSoles());
-							mapa[ubicacion.x-1][ubicacion.y].setTipo(TipoEnum.VACIO);
-							estadoPlanta.setCantZombies(estadoPlanta.getCantZombies()-1);
-							bandera=false;
+			if (ubicacion.x < 4) { //Chequeo que el agente no se encuentre en la ultima fila (sobre el borde inferior) y quiera matar a alguien de la siguiente fila
+				
+				Celda celdaAdyacente = mapa[ubicacion.x+1][ubicacion.y];
+			
+				if (celdaAdyacente.hayZombie()) { //si hay zombie en la celda adyacente
+						boolean bandera=true;
+						int index = -1;
+				
+						for(int i=0;i<zombiesPercibidos.size() && bandera;i++) {
+							
+							if((zombiesPercibidos.get(i).getUbicacionZombie().x==ubicacion.x+1) &&
+							  (zombiesPercibidos.get(i).getUbicacionZombie().y==ubicacion.y)) {
+										
+								// Chequeo si le alcanzan los soles para matar al zombie
+								if (zombiesPercibidos.get(i).getCosteDeSoles() < estadoPlanta.getCantSolesDisponibles()) {
+									index = i;
+								}
+								bandera=false;
+							}
 						}
-					}
-					
-				}
-		
+						
+						if (index != -1) {
+							
+							siguienteEstado.setZombiesPercibidos(zombiesPercibidos);
+							siguienteEstado.setCantSolesDisponibles(estadoPlanta.getCantSolesDisponibles()-zombiesPercibidos.get(index).getCosteDeSoles());
+							mapa[ubicacion.x+1][ubicacion.y].setTipo(TipoEnum.VACIO);
+							estadoPlanta.setCantZombies(estadoPlanta.getCantZombies()-1);
+						
+							zombiesPercibidos.remove(index);
+							
+							return siguienteEstado;
+						}
+					}		
+			}
+		}
 		return null;
 	}
 
 	@Override
 	public Double getCost() {
 		// TODO Auto-generated method stub
-		return null;
+		return 2.0;
 	}
 
 	@Override
 	public EnvironmentState execute(AgentState ast, EnvironmentState est) {
-		// TODO Auto-generated method stub
+		
 		EstadoAgente estadoPlanta = (EstadoAgente) ast;
 		EstadoAmbiente estadoAmbiente = (EstadoAmbiente) est;
 		
-		Celda[][] mapa= estadoPlanta.getMapa();
-		java.util.List<Zombie> listaZombies = estadoAmbiente.getZombies();
-		AgentePercepciones percepcion = estadoPlanta.getPercepcion();
-		Point ubicacion = estadoPlanta.getPosicion();
-		if((mapa[ubicacion.x-1][ubicacion.y].getTipo().equals(TipoEnum.ZOMBIE))){
-				boolean bandera=true;
+		if (estadoPlanta.getCantSolesDisponibles() > 0) { //ejecutar la accion solo si el agente tiene soles disponibles (CONDICION DE PARADA)
+		
+			Celda[][] mapaAgente = estadoPlanta.getMapa();
+			Celda[][] mapaAmbiente = estadoAmbiente.getMapa();
 			
-				for(int i=0;i<listaZombies.size() && bandera;i++) {
+			Point ubicacion = estadoPlanta.getPosicion();
+			
+			List<Zombie> zombiesPercibidos = estadoPlanta.getZombiesPercibidos();
+			List<Zombie> listaZombies = estadoAmbiente.getZombies();
+			
+			if (ubicacion.x < 4) { //Chequeo que el agente no se encuentre en la ultima fila (sobre el borde inferior) y quiera matar a alguien de la siguiente fila
+				
+				Celda celdaAdyacente = mapaAgente[ubicacion.x+1][ubicacion.y];
+			
+				if (celdaAdyacente.hayZombie()) { //si hay zombie en la celda adyacente
+						boolean bandera=true;
+						int index1 = -1;
+						int index2 = -1;
+					
+						// Recorro la lista de zombies que hay en el ambiente y actualizo el estado de la lista si se elimina uno
+						for(int i=0;i<listaZombies.size() && bandera;i++) {
+								
+							if((listaZombies.get(i).getUbicacionZombie().x==ubicacion.x+1) &&
+							  (listaZombies.get(i).getUbicacionZombie().y==ubicacion.y)) {
+									
+								// Chequeo si le alcanzan los soles para matar al zombie
+								if (listaZombies.get(i).getCosteDeSoles() < estadoPlanta.getCantSolesDisponibles()) {
+									index1 = i;
+								}
+								bandera=false;
+							}
+						}
 						
-						if((listaZombies.get(i).getUbicacionZombie().x==ubicacion.x-1) &&
-						  (listaZombies.get(i).getUbicacionZombie().y==ubicacion.y)) {
-							listaZombies.remove(i);
+						// Recorro la lista de zombies percibidos por el agente y la actualizo si se borra un zombie de la misma
+						for(int j=0;j<zombiesPercibidos.size() && bandera;j++) {
+							
+							if((zombiesPercibidos.get(j).getUbicacionZombie().x==ubicacion.x+1) &&
+							  (zombiesPercibidos.get(j).getUbicacionZombie().y==ubicacion.y)) {
+								
+								// Chequeo si le alcanzan los soles para matar al zombie
+								if (zombiesPercibidos.get(j).getCosteDeSoles() < estadoPlanta.getCantSolesDisponibles()) {
+									index2 = j;
+								}
+								bandera=false;
+							}
+						}
 						
-							percepcion.setZombiesPercibidos(listaZombies);
-							estadoPlanta.setCantSolesDisponibles(estadoPlanta.getCantSolesDisponibles()-listaZombies.get(i).getCosteDeSoles());
-							mapa[ubicacion.x-1][ubicacion.y].setTipo(TipoEnum.VACIO);
-							estadoPlanta.setCantZombies(estadoPlanta.getCantZombies()-1);
+						if (index1 != -1) {
 							
 							estadoAmbiente.setZombies(listaZombies);
-							estadoAmbiente.setMapa(mapa);
-							bandera=false;
+							estadoPlanta.setCantSolesDisponibles(estadoPlanta.getCantSolesDisponibles()-listaZombies.get(index1).getCosteDeSoles());
+							mapaAmbiente[ubicacion.x+1][ubicacion.y].setTipo(TipoEnum.VACIO);
+							estadoPlanta.setCantZombies(estadoPlanta.getCantZombies()-1);
+							estadoAmbiente.setMapa(mapaAmbiente);
+							
+							listaZombies.remove(index1);
+							estadoAmbiente.setZombies(listaZombies);
+							
+							return estadoAmbiente;
 						}
-					}
-					
-				}
-		
+						
+						if (index2 != -1) {
+						
+							estadoPlanta.setZombiesPercibidos(zombiesPercibidos);
+							estadoPlanta.setCantSolesDisponibles(estadoPlanta.getCantSolesDisponibles()-zombiesPercibidos.get(index2).getCosteDeSoles());
+							mapaAgente[ubicacion.x+1][ubicacion.y].setTipo(TipoEnum.VACIO);
+							estadoPlanta.setCantZombies(estadoPlanta.getCantZombies()-1);
+							estadoPlanta.setMapa(mapaAgente);
+							
+							zombiesPercibidos.remove(index2);
+						}
+				}		
+			}
+		}
 		return null;
 	}
 
 	@Override
 	public String toString() {
-		// TODO Auto-generated method stub
-		return null;
+		return "Derribar zombie sur";
 	}
 
 }

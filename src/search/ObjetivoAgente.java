@@ -10,8 +10,8 @@ public class ObjetivoAgente extends GoalTest {
 		
 		EstadoAgente e = (EstadoAgente) agentState;
 		
-		if (e.getCantSolesDisponibles() > 1 && e.getCantZombies() == 0) return true;
-		return false;
+		if (e.getCantZombies() == e.getZombiesPercibidos().size() && e.getCantSolesDisponibles() > 1 && e.getCantZombies() == 0) return true;
+		else return false;
 	}
 
 }
