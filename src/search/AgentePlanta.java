@@ -11,7 +11,9 @@ import frsf.cidisi.faia.agent.search.SearchAction;
 import frsf.cidisi.faia.agent.search.SearchBasedAgent;
 import frsf.cidisi.faia.solver.search.BreathFirstSearch;
 import frsf.cidisi.faia.solver.search.DepthFirstSearch;
+import frsf.cidisi.faia.solver.search.GreedySearch;
 import frsf.cidisi.faia.solver.search.Search;
+import frsf.cidisi.faia.solver.search.UniformCostSearch;
 import actions.AvanzarEste;
 import actions.AvanzarNorte;
 import actions.AvanzarOeste;
@@ -53,19 +55,17 @@ public class AgentePlanta extends SearchBasedAgent{
     public Action selectAction() {
 		
         // Create the search strategy
-    	//CostFunction.Type=CostFunctionType.TRAVELMONEY;
-        //UniformCostSearch strategy = new UniformCostSearch(new CostFunction());
-        //GreedySearch strategy = new GreedySearch(new Heuristic());
-    	//AStarSearch strategy = new AStarSearch(new CostFunction(), new Heuristic());
-        BreathFirstSearch strategy = new BreathFirstSearch();
-    	//DepthFirstSearch strategy = new DepthFirstSearch();
+        //DepthFirstSearch strategy = new DepthFirstSearch(); //PROFUNDIDAD         
+        BreathFirstSearch strategy = new BreathFirstSearch(); //AMPLITUD
+        //UniformCostSearch strategy = new UniformCostSearch(new CostFunction()); //COSTO UNIFORME
+    	//GreedySearch strategy = new GreedySearch(new Heuristic()); //AVARA
     	
         // Create a Search object with the strategy
         Search searchSolver = new Search(strategy);
 
         /* Generate an XML file with the search tree. It can also be generated
          * in other formats like PDF with PDF_TREE */
-        searchSolver.setVisibleTree(Search.EFAIA_TREE);
+        //searchSolver.setVisibleTree(Search.EFAIA_TREE);
 
         // Set the Search searchSolver.
         this.setSolver(searchSolver);

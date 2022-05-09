@@ -144,7 +144,7 @@ public class EstadoAgente extends SearchBasedAgentState{
 		int solesDisponibles= (int) Math.floor(Math.random()*(20-2+1)+2);
 		this.setCantSolesDisponibles(solesDisponibles);
 		//this.setCantZombies((int) Math.floor(Math.random()*(20-5+1)+5)); //Cantidad maxima de zombies en el inicio del juego
-		//this.setCantZombies(1);
+		this.setCantZombies(1);
 		this.setMapa(new Celda[5][9]);
 		this.zombiesPercibidos = new ArrayList<Zombie>();
 	}
@@ -152,5 +152,19 @@ public class EstadoAgente extends SearchBasedAgentState{
 	public void agregarGirasol(Girasol nuevoGirasol) {
 		 this.girasolesPercibidos.add(nuevoGirasol);
 	 }
+	
+	public Zombie buscarZombie(int fila,int columna){
+		boolean bandera=true;
+		int i=0;
+		Zombie zombie= null;
+		while(bandera && zombiesPercibidos.size()>i){
+			if(zombiesPercibidos.get(i).ubicacionZombie.x==fila && zombiesPercibidos.get(i).ubicacionZombie.y==columna)	{
+				zombie = zombiesPercibidos.get(i);
+				bandera=false;
+			}
+			i++;
+		}
+		return zombie;
+	}
 
 }
