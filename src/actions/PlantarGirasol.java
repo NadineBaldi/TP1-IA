@@ -19,15 +19,16 @@ public class PlantarGirasol extends SearchAction{
 		//PLANTA GIRASOL EN LA POSICION EN LA QUE SE ENCUENTRA
 		EstadoAgente estadoPlanta = (EstadoAgente) s;
 		EstadoAgente siguienteEstado = estadoPlanta.clone();
+		int solesDisponibles = estadoPlanta.getCantSolesDisponibles();
 		
-		if (estadoPlanta.getCantSolesDisponibles() > 0) { //ejecutar la accion solo si el agente tiene soles disponibles (CONDICION DE PARADA)
+		if (solesDisponibles > 0) { //ejecutar la accion solo si el agente tiene soles disponibles (CONDICION DE PARADA)
 		
 			Girasol nuevoGirasol = new Girasol();
 			Celda[][] mapa = siguienteEstado.getMapa();
 			Point ubicacion = siguienteEstado.getPosicion();
 			Celda celdaActual = mapa[ubicacion.x][ubicacion.y];
 			
-			if (celdaActual.puedePlantar()) {
+			if (celdaActual.puedePlantar() && solesDisponibles > 1 ) {
 				nuevoGirasol.setUbicacionGirasol(new Point(ubicacion.x, ubicacion.y));
 				nuevoGirasol.setCantSoles(0);
 				
@@ -35,6 +36,7 @@ public class PlantarGirasol extends SearchAction{
 			
 				siguienteEstado.setMapa(mapa);
 				siguienteEstado.agregarGirasol(nuevoGirasol);
+				siguienteEstado.setCantSolesDisponibles(solesDisponibles - 1);
 				
 				return siguienteEstado;
 				
@@ -54,8 +56,9 @@ public class PlantarGirasol extends SearchAction{
 		
 	     EstadoAmbiente estadoAmbiente = (EstadoAmbiente) est;
 	     EstadoAgente estadoPlanta = (EstadoAgente) ast;
-	
-	     if (estadoPlanta.getCantSolesDisponibles() > 0) { //ejecutar la accion solo si el agente tiene soles disponibles (CONDICION DE PARADA)
+	     int solesDisponibles = estadoPlanta.getCantSolesDisponibles();
+	     
+	     if (solesDisponibles > 0) { //ejecutar la accion solo si el agente tiene soles disponibles (CONDICION DE PARADA)
 	     
 		     Girasol nuevoGirasol = new Girasol();
 			 Celda[][] mapaAgente = estadoPlanta.getMapa();
@@ -72,6 +75,7 @@ public class PlantarGirasol extends SearchAction{
 				
 				estadoPlanta.setMapa(mapaAgente);
 				estadoPlanta.agregarGirasol(nuevoGirasol);
+				estadoPlanta.setCantSolesDisponibles(solesDisponibles - 1);
 				estadoAmbiente.setMapa(mapaAmbiente);
 				estadoAmbiente.agregarGirasol(nuevoGirasol);
 				

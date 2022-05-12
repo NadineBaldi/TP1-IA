@@ -66,56 +66,98 @@ public class AgentePercepciones extends Perception{
         setZombiesPercibidos(new ArrayList<Zombie>()); //inicializo los zombies percibidos como una lista vacia
         setGirasolesPercibidos(new ArrayList<Girasol>()); //inicializo los girasoles percibidos como una lista vacia
 
-        //recorre izquierda-derecha
-        recorrerFila(posicionInicial.x+1,4,posicionInicial.y,estadoAmbiente);
-        // recorre derecha-izquierda
-        recorrerFila(0,posicionInicial.x-1,posicionInicial.y,estadoAmbiente);
-        // recorre norte-sur
-        recorrerColumna(posicionInicial.y+1,8,posicionInicial.x,estadoAmbiente);
-        //recorre sur-norte
-        recorrerColumna(0,posicionInicial.y-1,posicionInicial.x,estadoAmbiente);
+        //recorre norte-sur
+        recorrerColumnaNorteSur(posicionInicial.x+1,posicionInicial.y,estadoAmbiente);
+        // recorre sur-norte
+        recorrerColumnaSurNorte(posicionInicial.x-1,posicionInicial.y,estadoAmbiente);
+        // recorre izq-der
+        recorrerFilaIzqDer(posicionInicial.y+1,posicionInicial.x,estadoAmbiente);
+        //recorre der-izq
+        recorrerFilaDerIzq(posicionInicial.y-1,posicionInicial.x,estadoAmbiente);
         //percibir celda actual
         percibirCeldaActual(posicionInicial,estadoAmbiente);
         
         setMatrizPercibida(matrizPercibida); //seteo la matriz percibida con los datos actualizados
 	}
 	
-	public void recorrerFila(int extremoInicio,int extremoFin,int columna, EstadoAmbiente estadoAmbiente){
-		boolean banderaTope=true;
+	//percibe desde la ubicacion del agente hacia abajo
+	public void recorrerColumnaNorteSur(int extremoInicio,int columna, EstadoAmbiente estadoAmbiente){
 		List<Zombie> zombiesEnAmbiente = estadoAmbiente.getZombies(); 
 		List<Girasol> girasolesEnAmbiente = estadoAmbiente.getGirasoles();
 		Celda[][] mapa = estadoAmbiente.getMapa();
 		
-		for(int fila=extremoInicio; fila<=extremoFin && banderaTope;fila++) {
+		for(int fila=extremoInicio; fila<=3;fila++) {
 		    if(mapa[fila][columna].getTipo()==TipoEnum.ZOMBIE){
 		   		matrizPercibida[fila][columna].setTipo(TipoEnum.ZOMBIE);
 		   		zombiesPercibidos.add(buscarZombie(fila,columna,zombiesEnAmbiente));
-	 			banderaTope=false;
+	 			break;
 		    } else if(mapa[fila][columna].getTipo()==TipoEnum.GIRASOL){
 		    	matrizPercibida[fila][columna].setTipo(TipoEnum.GIRASOL);
 		   		girasolesPercibidos.add(buscarGirasol(fila,columna,girasolesEnAmbiente));
-	 			banderaTope=false;
+	 			break;
+			} else if(mapa[fila][columna].getTipo()==TipoEnum.VACIO){
+		    	matrizPercibida[fila][columna].setTipo(TipoEnum.VACIO);
+		   	}
+		}
+	}
+	
+	//percibe desde la ubicacion del agente hacia arriba
+	public void recorrerColumnaSurNorte(int extremoInicio,int columna, EstadoAmbiente estadoAmbiente){
+		List<Zombie> zombiesEnAmbiente = estadoAmbiente.getZombies(); 
+		List<Girasol> girasolesEnAmbiente = estadoAmbiente.getGirasoles();
+		Celda[][] mapa = estadoAmbiente.getMapa();
+		
+		for(int fila=extremoInicio; fila>=0;fila--) {
+		    if(mapa[fila][columna].getTipo()==TipoEnum.ZOMBIE){
+		   		matrizPercibida[fila][columna].setTipo(TipoEnum.ZOMBIE);
+		   		zombiesPercibidos.add(buscarZombie(fila,columna,zombiesEnAmbiente));
+	 			break;
+		    } else if(mapa[fila][columna].getTipo()==TipoEnum.GIRASOL){
+		    	matrizPercibida[fila][columna].setTipo(TipoEnum.GIRASOL);
+		   		girasolesPercibidos.add(buscarGirasol(fila,columna,girasolesEnAmbiente));
+	 			break;
 			} else if(mapa[fila][columna].getTipo()==TipoEnum.VACIO){
 		    	matrizPercibida[fila][columna].setTipo(TipoEnum.VACIO);
 		   	}
 		}
 	}
 
-	public void recorrerColumna(int extremoInicio,int extremoFin,int fila, EstadoAmbiente estadoAmbiente){
-		boolean banderaTope=true;
+	//percibe desde la ubicacion del agente hacia la derecha
+	public void recorrerFilaIzqDer(int extremoInicio,int fila, EstadoAmbiente estadoAmbiente){
 		List<Zombie> zombiesEnAmbiente = estadoAmbiente.getZombies(); 
 		List<Girasol> girasolesEnAmbiente = estadoAmbiente.getGirasoles();
 		Celda[][] mapa = estadoAmbiente.getMapa();
 		
-		for(int columna=extremoInicio; columna<=extremoFin && banderaTope;columna++) {
+		for(int columna=extremoInicio; columna<=8;columna++) {
 			if(mapa[fila][columna].getTipo()==TipoEnum.ZOMBIE){
 	    		matrizPercibida[fila][columna].setTipo(TipoEnum.ZOMBIE);
 	   			zombiesPercibidos.add(buscarZombie(fila,columna,zombiesEnAmbiente));
-	   			banderaTope=false;
+	   			break;
 	   		} else if(mapa[fila][columna].getTipo()==TipoEnum.GIRASOL){
 	    		matrizPercibida[fila][columna].setTipo(TipoEnum.GIRASOL);
 	    		girasolesPercibidos.add(buscarGirasol(fila,columna,girasolesEnAmbiente));
-	    		banderaTope=false;
+	    		break;
+	   		} else if(mapa[fila][columna].getTipo()==TipoEnum.VACIO){
+	    		matrizPercibida[fila][columna].setTipo(TipoEnum.VACIO);
+	    	}
+	    }
+	}
+	
+	//percibe desde la ubicacion del agente hacia la izquierda
+	public void recorrerFilaDerIzq(int extremoInicio,int fila, EstadoAmbiente estadoAmbiente){
+		List<Zombie> zombiesEnAmbiente = estadoAmbiente.getZombies(); 
+		List<Girasol> girasolesEnAmbiente = estadoAmbiente.getGirasoles();
+		Celda[][] mapa = estadoAmbiente.getMapa();
+		
+		for(int columna=extremoInicio; columna>=0;columna--) {
+			if(mapa[fila][columna].getTipo()==TipoEnum.ZOMBIE){
+	    		matrizPercibida[fila][columna].setTipo(TipoEnum.ZOMBIE);
+	   			zombiesPercibidos.add(buscarZombie(fila,columna,zombiesEnAmbiente));
+	   			break;
+	   		} else if(mapa[fila][columna].getTipo()==TipoEnum.GIRASOL){
+	    		matrizPercibida[fila][columna].setTipo(TipoEnum.GIRASOL);
+	    		girasolesPercibidos.add(buscarGirasol(fila,columna,girasolesEnAmbiente));
+	    		break;
 	   		} else if(mapa[fila][columna].getTipo()==TipoEnum.VACIO){
 	    		matrizPercibida[fila][columna].setTipo(TipoEnum.VACIO);
 	    	}
@@ -155,7 +197,7 @@ public class AgentePercepciones extends Perception{
 		
 		for(int i=0; i<5; i++) {
 			for(int j=0; j<9; j++) {
-				if (posicionAgente.x != i && posicionAgente.y != j) {
+				if ((posicionAgente.x != i || posicionAgente.y != j)) {
 					nuevoMapa[i][j] = new Celda(TipoEnum.DESCONOCIDO);
 				} else {
 					nuevoMapa[i][j] = mapaAmbiente[i][j].clone();

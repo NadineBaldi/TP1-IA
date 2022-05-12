@@ -43,7 +43,7 @@ public class DerribarZombieOeste extends SearchAction{
 									
 									// Chequeo si le alcanzan los soles para matar al zombie
 									if (zombiesPercibidos.get(i).getCosteDeSoles() < estadoPlanta.getCantSolesDisponibles()) {
-										index = 1;
+										index = i;
 									}
 									bandera=false;
 								}
@@ -51,12 +51,12 @@ public class DerribarZombieOeste extends SearchAction{
 						
 						if (index != -1) {
 							
-							siguienteEstado.setZombiesPercibidos(zombiesPercibidos);
 							siguienteEstado.setCantSolesDisponibles(estadoPlanta.getCantSolesDisponibles()-zombiesPercibidos.get(index).getCosteDeSoles());
 							mapa[ubicacion.x][ubicacion.y-1].setTipo(TipoEnum.VACIO);
 							estadoPlanta.setCantZombies(estadoPlanta.getCantZombies()-1);
 							
 							zombiesPercibidos.remove(index);
+							siguienteEstado.setZombiesPercibidos(zombiesPercibidos);
 							
 							return siguienteEstado;
 						}

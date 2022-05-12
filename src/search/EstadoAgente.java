@@ -25,7 +25,6 @@ public class EstadoAgente extends SearchBasedAgentState{
 	}
 	
 	public EstadoAgente() {
-		this.initState();
 	}
 	
 	//Getters y setters
@@ -110,11 +109,22 @@ public class EstadoAgente extends SearchBasedAgentState{
 		
 		AgentePercepciones nuevaPercepcion = (AgentePercepciones) p;
 		
-		this.setGirasolesPercibidos(nuevaPercepcion.getGirasolesPercibidos());
+		this.actualizarDatos(nuevaPercepcion.getGirasolesPercibidos()/*,nuevaPercepcion.getZombiesPercibidos()*/);
 		this.setZombiesPercibidos(nuevaPercepcion.getZombiesPercibidos());
 		this.setMapa(nuevaPercepcion.getMatrizPercibida());
 
 	}
+	
+	public void actualizarDatos(List<Girasol> nuevosGirasoles/*, List<Zombie> nuevosZombies*/) {
+        if(nuevosGirasoles != null) {
+            for(int i=0; i<nuevosGirasoles.size(); i++) {
+             Girasol girasolABuscar = this.buscarGirasol(nuevosGirasoles.get(i).getUbicacionGirasol().x, nuevosGirasoles.get(i).getUbicacionGirasol().y);
+                if(!this.girasolesPercibidos.contains(girasolABuscar)) {
+                    this.agregarGirasol(nuevosGirasoles.get(i));
+                }
+            }
+        }
+    }
 	
 	@Override
 	public String toString() {
@@ -147,10 +157,39 @@ public class EstadoAgente extends SearchBasedAgentState{
 		//this.setCantZombies(1);
 		this.setMapa(new Celda[5][9]);
 		this.zombiesPercibidos = new ArrayList<Zombie>();
+		this.girasolesPercibidos = new ArrayList<Girasol>();
 	}
 	
 	public void agregarGirasol(Girasol nuevoGirasol) {
 		 this.girasolesPercibidos.add(nuevoGirasol);
 	 }
+	
+	public Zombie buscarZombie(int fila,int columna){
+		boolean bandera=true;
+		int i=0;
+		Zombie zombie= null;
+		while(bandera && zombiesPercibidos.size()>i){
+			if(zombiesPercibidos.get(i).ubicacionZombie.x==fila && zombiesPercibidos.get(i).ubicacionZombie.y==columna)	{
+				zombie = zombiesPercibidos.get(i);
+				bandera=false;
+			}
+			i++;
+		}
+		return zombie;
+	}
+	
+	public Girasol buscarGirasol(int fila, int columna){
+		boolean bandera=true;
+		int i=0;
+		Girasol girasol= null;
+		while(bandera && girasolesPercibidos.size()>i){
+			if(girasolesPercibidos.get(i).ubicacionGirasol.x==fila && girasolesPercibidos.get(i).ubicacionGirasol.y==columna)	{
+				girasol = girasolesPercibidos.get(i);
+				bandera=false;
+			}
+			i++;
+		}
+		return girasol;
 
+	}
 }
